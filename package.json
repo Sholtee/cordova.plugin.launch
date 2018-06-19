@@ -1,0 +1,20 @@
+{
+  "name": "cordova-plugin-launch",
+  "version": "0.0.1",
+  "description": "Implements application launching on Android",
+  "cordova": {
+    "id": "solti.cordova.plugin.launch",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sholtee/cordova.plugin.launch.git"
+  },
+  "keywords": [
+    "cordova",
+	"launch"
+  ],
+  "author": "Denes Solti"
+}
