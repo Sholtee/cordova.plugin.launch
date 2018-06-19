@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="solti.cordova.plugin.launch" version="0.0.1">
+  <name>Launch</name>
+  <description>Implements application launching on Android</description>
+  <author>Dénes Solti</author>
+
+  <js-module src="www/launch.js" name="exit">
+    <merges target="navigator.app" />
+  </js-module>
+
+  <!-- android -->
+  <platform name="android">
+    <source-file src="src/android/LauncherPlugin.java" target-dir="src/cordova/custom/plugins/launch" />
+    <config-file target="config.xml" parent="/*">
+      <feature name="LauncherPlugin">
+        <param name="android-package" value="org.solti.cordova.plugin.launch.LauncherPlugin" />
+      </feature>
+    </config-file>
+  </platform>
+</plugin>
