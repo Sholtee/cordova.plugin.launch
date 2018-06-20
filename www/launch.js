@@ -7,7 +7,9 @@ var exec = require('cordova/exec');
 module.exports = {
   launch: function(packageName) {
 	return new Promise(function(resolve, reject){
-		exec(resolve, reject, 'LauncherPlugin', 'launch', [packageName]);
+		exec(function(data){
+			if (data.isActivityDone) resolve(data);
+		}, reject, 'LauncherPlugin', 'launch', [packageName]);
 	});   
   }
 };
