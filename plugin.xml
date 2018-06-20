@@ -4,8 +4,8 @@
   <description>Implements application launching on Android</description>
   <author>Dénes Solti</author>
 
-  <js-module src="www/launch.js" name="exit">
-    <merges target="navigator.app" />
+  <js-module src="www/launch.js" name="launch">
+    <merges target="window" />
   </js-module>
 
   <!-- android -->
