@@ -7,6 +7,10 @@
   <js-module src="www/launch.js" name="launch">
     <merges target="window" />
   </js-module>
+  
+  <engines>
+	<engine name="android-sdk" version=">=19" />
+  </engines>
 
   <!-- android -->
   <platform name="android">
