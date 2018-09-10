@@ -1,6 +1,7 @@
 {
-  "name": "cordova-plugin-launch",
+  "name": "@sholtee/cordova-plugin-launch",
   "version": "0.0.1",
+  "license": "MIT",
   "description": "Implements application launching on Android",
   "cordova": {
     "id": "solti.cordova.plugin.launch",
