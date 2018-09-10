@@ -14,5 +14,8 @@ This plugin supports PhoneGap/Cordova apps running on Android.
 
 ## Usage
 ```js
-cost userData = await window.launch({packageName: "com.foo.bar"});
+cost userData = (await window.launch({packageName: "com.foo.bar"})).extras;
+if (userData.RetVal) {  // if you're using @sholtee/cordova-plugin-exit
+    ...
+}
 ```
