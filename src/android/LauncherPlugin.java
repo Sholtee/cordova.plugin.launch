@@ -19,6 +19,11 @@ import android.os.Bundle;
 
 public final class LauncherPlugin extends CordovaPlugin {
 	private static final int LAUNCH_REQUEST = 0;
+	private static final String 
+	    PACKAGE_NAME = "packageName",
+	    EXTRAS       = "extras",
+		IS_LAUNCHED  = "isLaunched",
+		IS_DONE      = "isActivityDone";
 	
 	private CallbackContext callback;
 
@@ -27,16 +32,18 @@ public final class LauncherPlugin extends CordovaPlugin {
 		if (!"launch".equals(action)) return false;
 
 		callback = callbackContext;
+        
+		final JSONObject opts = args.getJSONObject(0);
+		
+		final String 
+		    packageName = opts.getString(PACKAGE_NAME),
+			extras      = opts.has(EXTRAS) ? opts.getString(EXTRAS) : null;
 
-		final String packageName = args
-			.getJSONObject(0)
-			.getString("packageName");
-
-		launch(packageName);
+		launch(packageName, extras);
 		return true;
 	}
 
-	private void launch(String packageName) {
+	private void launch(String packageName, String strExtras) {
 		final LauncherPlugin self = this;
 		
 		cordova.getThreadPool().execute(() -> {
@@ -46,21 +53,47 @@ public final class LauncherPlugin extends CordovaPlugin {
                 .getPackageManager()
                 .getLaunchIntentForPackage(packageName);
 
-            if (launchIntent != null)
-            try {
-                launchIntent.setFlags(0); // getLaunchIntentForPackage() beallitasok torlese
-                self.cordova.startActivityForResult(self, launchIntent, LAUNCH_REQUEST);
+            if (launchIntent != null) {
+				//
+				// Clear flags [set by getLaunchIntentForPackage()]
+				//
+				
+				launchIntent.setFlags(0);
+				
+				//
+				// Add extended data to the intent (if needed).
+				//
+				
+				if (strExtras != null) { 
+					try {
+						final JSONObject extras = new JSONObject(strExtras);
+						for (String key : (Iterable<String>)() -> extras.keys()) {
+							launchIntent.putExtra(key, extras.getString(key));  // TODO: convert
+						}
+					}
+					catch (JSONException e){
+						launchIntent.putExtra(EXTRAS, strExtras);
+					}
+				}
+				
+				//
+				// Try to start activity
+				//		
+				
+				try {							
+					self.cordova.startActivityForResult(self, launchIntent, LAUNCH_REQUEST);
 
-                //
-                // App inditas sikeres.
-                //
+					//
+					// Activity starting successful
+					//
 
-				triggerLaunched();
-                return;
-            } catch (ActivityNotFoundException e) {}
+					triggerLaunched();
+					return;
+				} catch (ActivityNotFoundException e) {}
+            }
 
             //
-            // App inditas sikertelen.
+            // Activity starting failed
             //
 
             self.callback.error("Activity not found for package name.");
@@ -70,7 +103,7 @@ public final class LauncherPlugin extends CordovaPlugin {
 	private void triggerLaunched(){
 		final JSONObject json = new JSONObject();
 		try {
-			json.put("isLaunched", true);
+			json.put(IS_LAUNCHED, true);
 		} catch (JSONException e){}
 
 		final PluginResult result = new PluginResult(PluginResult.Status.OK, json);
@@ -91,7 +124,7 @@ public final class LauncherPlugin extends CordovaPlugin {
 		
 		final JSONObject json = new JSONObject();
 		try {
-			json.put("isActivityDone", true);
+			json.put(IS_DONE, true);
 
 			if (intent != null) {
 				final Bundle extras = intent.getExtras();
@@ -103,7 +136,7 @@ public final class LauncherPlugin extends CordovaPlugin {
 						jsonExtras.put(key, JSONObject.wrap(extras.get(key)));
 					}
 
-					json.put("extras", jsonExtras);
+					json.put(EXTRAS, jsonExtras);
 				}
 			}
 		} catch (JSONException e){}
