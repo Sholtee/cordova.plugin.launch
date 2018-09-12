@@ -16,9 +16,9 @@ This plugin supports PhoneGap/Cordova apps running on Android.
 ```js
 const result = await window.launch({
     packageName: "com.foo.bar", // required
-	extras: { // optional
-	    ...
-	}
+    extras: { // optional
+        ...
+    }
 });
 
 const extras = result.extras;
